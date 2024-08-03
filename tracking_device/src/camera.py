@@ -14,19 +14,26 @@ class Camera:
         self._picam2.preview_configuration.main.format = "RGB888"
         self._picam2.preview_configuration.align()
         self._picam2.configure("preview")
-        self._command = ['ffmpeg',
-                         '-y',
-                         '-f', 'rawvideo',
-                         '-vcodec', 'rawvideo',
-                         '-pix_fmt', 'bgr24',
-                         '-s', "{}x{}".format(self._width, self._height),
-                         '-r', "30",
-                         '-i', '-',
-                         '-c:v', 'libx264',
-                         '-pix_fmt', 'yuv420p',
-                         '-preset', 'ultrafast',
-                         '-f', 'flv',
-                         self._rtmp_url]
+        self._command = [
+            'ffmpeg',
+            '-y',
+            '-f', 'rawvideo',
+            '-vcodec', 'rawvideo',
+            '-pix_fmt', 'bgr24',
+            '-s', "{}x{}".format(self._width, self._height),
+            '-r', "30",
+            '-i', '-',
+            '-c:v', 'libx264',
+            '-pix_fmt', 'yuv420p',
+            '-preset', 'ultrafast',
+            '-tune', 'zerolatency',
+            '-fflags', 'nobuffer',
+            '-flags', 'low_delay',
+            '-strict', 'experimental',
+            '-flush_packets', '1',
+            '-f', 'flv',
+            self._rtmp_url
+        ]
 
     def close(self):
         self._picam2.close()
